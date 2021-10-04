@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <ctime>
 
-// #define SHOW
+#define SHOW
 
 struct Permutation {
     const static int MAXN = 20;
@@ -40,13 +40,21 @@ struct Permutation {
         printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
     }
 
+    void neighbour_exchange() {
+        while (true) {
+            #ifdef SHOW
+            puts(s+1);
+            #endif
+        }
+    }
+
     void next_permutation() {
         auto st = s+1;
-        while (std::next_permutation(st, st+N)) {
+        do {
             #ifdef SHOW
             puts(st);
             #endif
-        };
+        } while (std::next_permutation(st, st+N));
     }
 
     void recursive() {
@@ -74,6 +82,10 @@ struct Permutation {
 
     void dictionary() {
         while (true) {
+            #ifdef SHOW
+            puts(s+1);
+            #endif
+
             int i = N-1;
             while (s[i+1] < s[i]) i--;
             if (i == 0) break;
@@ -82,15 +94,11 @@ struct Permutation {
             char c = s[j];
             s[j] = s[i], s[i] = c;
             std::reverse(s+i+1, s+N+1);
-
-            #ifdef SHOW
-            puts(s+1);
-            #endif
         }
     }
 } perm;
 
 int main() {
-    perm.generate(11);
+    perm.generate(3);
     return 0;
 }
