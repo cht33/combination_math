@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <ctime>
 
-#define SHOW
+// #define SHOW
 
 struct Permutation {
     const static int MAXN = 20;
@@ -29,24 +29,77 @@ struct Permutation {
         dictionary();
         printf("dictionary: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        recursive();
-        printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // recursive();
+        // printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
         next_permutation();
         printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
+        neighbour_exchange();
+        printf("neighbour: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
     }
 
     void neighbour_exchange() {
+        int idx_N = N, t_N = -1;
         while (true) {
             #ifdef SHOW
             puts(s+1);
             #endif
+
+            int i = N;
+            r[i] += 1;
+            if (r[i] < N) {
+                char c = s[idx_N];
+                idx_N += t_N;
+                s[idx_N-t_N] = s[idx_N];
+                s[idx_N] = c;
+                continue;
+            }
+            while (r[i] == i) {
+                r[i] = 0;
+                r[--i] += 1;
+            }
+            if (i == 0) break;
+            int j = 1;
+            char c = 'a'+i-1;
+            while (s[j] != c) j++;
+            // 只需考虑最后一位的运算结果，1为奇，0为偶
+            int t = (r[i-1] ^ (~i & r[i-2])) & 1;
+            t = (t << 1) - 1;
+            c = s[j+t], s[j+t] = s[j], s[j] = c;
+            t_N = (r[N-1] ^ (~N & r[N-2])) & 1;
+            t_N = (t_N << 1) - 1;
         }
     }
+
+    // void neighbour_exchange() {
+    //     while (true) {
+    //         #ifdef SHOW
+    //         puts(s+1);
+    //         #endif
+
+    //         int i = N;
+    //         r[i] += 1;
+    //         while (r[i] == i) {
+    //             r[i] = 0;
+    //             r[--i] += 1;
+    //         }
+    //         if (i == 0) break;
+    //         int j = 1;
+    //         char c = 'a'+i-1;
+    //         while (s[j] != c) j++;
+    //         // 只需考虑最后一位的运算结果，1为奇，0为偶
+    //         int t = (r[i-1] ^ (~i & r[i-2])) & 1;
+    //         t = (t << 1) - 1;
+    //         c = s[j+t], s[j+t] = s[j], s[j] = c;
+    //     }
+    // }
 
     void next_permutation() {
         auto st = s+1;
@@ -99,6 +152,6 @@ struct Permutation {
 } perm;
 
 int main() {
-    perm.generate(3);
+    perm.generate(13);
     return 0;
 }
