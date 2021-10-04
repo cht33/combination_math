@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ctime>
 
-//#define SHOW
+// #define SHOW
 
 struct Permutation {
     const static int MAXN = 20;
@@ -48,13 +48,18 @@ struct Permutation {
 
         init();
         start = clock();
-        decrease();
-        printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        increase();
+        printf("increase: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
-        decrease_base();
+        decrease();
         printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        // init();
+        // start = clock();
+        // decrease_base();
+        // printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
@@ -81,6 +86,7 @@ struct Permutation {
     }
 
     void increase_base() {
+        s[N] = 0;
         do{
             for(int i = 0;i <= N;i ++)next[i] = i - 1;
             for(int i = N - 2;i >= 0;i --){
@@ -259,6 +265,29 @@ struct Permutation {
                 #endif
             } else {
                 recursive();
+            }
+            r[i] = 0;
+            cnt--;
+        }
+    }
+
+    void increase() {
+        for (int i = N; i > 0; i--) {
+            if (r[i] != 0) continue;
+            r[i] = 1;
+
+            #ifdef SHOW
+            s[i] = 'a' + N - cnt++;
+            #else
+            s[cnt++] = i;
+            #endif
+
+            if (cnt == N+1) {
+                #ifdef SHOW
+                puts(s+1);
+                #endif
+            } else {
+                increase();
             }
             r[i] = 0;
             cnt--;
