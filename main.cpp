@@ -7,7 +7,7 @@
 // #define SHOW
 
 struct Permutation {
-    const static int MAXN = 20;
+    const static int MAXN = 1000;
     int N;
     char s[2*MAXN]; // output string
     int r[MAXN]; // radix number
@@ -31,30 +31,30 @@ struct Permutation {
         dictionary();
         printf("dictionary: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        recursive();
-        printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // recursive();
+        // printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
         next_permutation();
         printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        increase_base();
-        printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // increase_base();
+        // printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
         new_increase_base();
         printf("new_increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        // init();
-        // start = clock();
-        // decrease_base();
-        // printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        init();
+        start = clock();
+        decrease_base();
+        printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
@@ -111,18 +111,20 @@ struct Permutation {
             }
 
             if(i == N + 1)break;
-            char c; int p;
+
             for(int j = 1;j < i; j ++) {
-                if(pointer[j] < pointer[i]){
-                    c = s[pointer[i]], s[pointer[i]] = s[pointer[j]], s[pointer[j]] = c;
-                    p = pointer[i], pointer[i] = pointer[j], pointer[j] = p;
+                int pj = pointer[j], pi = pointer[i];
+                if (pj < pi) {
+                    char c = s[pi]; s[pi] = s[pj], s[pj] = c;
+                    pointer[i] = pj, pointer[j] = pi;
                     break;
                 }
             }
             int l = 1, r = i - 1;
             while(l < r){
-                c = s[pointer[l]], s[pointer[l]] = s[pointer[r]], s[pointer[r]] = c;
-                p = pointer[l], pointer[l] = pointer[r], pointer[r] = p;
+                int pl = pointer[l], pr = pointer[r];
+                char c = s[pl]; s[pl] = s[pr], s[pr] = c;
+                pointer[l] = pr, pointer[r] = pl;
                 l ++; r --;
             }
         }
@@ -158,7 +160,11 @@ struct Permutation {
             for (j = 0; j < t; j++) {
                 st[N+j] = st[t-1-j];
             }
-            memmove(st, st+t, N*sizeof(char));
+            if (t < 2) st += t;
+            else {
+                memmove(s, st+t, N*sizeof(char));
+                st = s;
+            }
             st[N] = 0;
             idx_N = N-1;
         }
@@ -265,7 +271,10 @@ struct Permutation {
             while (s[j] < s[i]) j--;
             char c = s[j];
             s[j] = s[i], s[i] = c;
-            std::reverse(s+i+1, s+N+1);
+            // std::reverse(s+i+1, s+N+1);
+            auto l = s+i+1, r = s+N;
+            while (l < r)
+                c = *l, *l = *r, *r = c, l++, r--;
         }
     }
 } perm;
