@@ -10,6 +10,9 @@ struct Permutation {
     const static int MAXN = 1000;
     int N;
     char s[2*MAXN]; // output string
+    char s1[2*MAXN]; // backup
+    int lb;
+    char* st;
     int r[MAXN]; // radix number
     int cnt;
     int next[MAXN];
@@ -17,10 +20,13 @@ struct Permutation {
     void init() {
         memset(s, 0, 2*MAXN*sizeof(char));
         memset(r, 0, MAXN*sizeof(int));
-        for (int i = 1; i <= N; i++)
+        for (int i = 1; i <= N; i++) {
             s[i] = 'a' + i - 1;
+            s1[i-1] = 'a' + i - 1;
+        }
         s[0] = 0;
         cnt = 1;
+        lb = N;
     }
 
     void generate(int n) {
@@ -31,10 +37,15 @@ struct Permutation {
         dictionary();
         printf("dictionary: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        // init();
-        // start = clock();
-        // recursive();
-        // printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        init();
+        start = clock();
+        recursive();
+        printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
+        new_recursive();
+        printf("new_recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
@@ -46,20 +57,20 @@ struct Permutation {
         // increase_base();
         // printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        new_increase_base();
-        printf("new_increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // new_increase_base();
+        // printf("new_increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        decrease_base();
-        printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // decrease_base();
+        // printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        neighbour_exchange();
-        printf("neighbour_exchange: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // neighbour_exchange();
+        // printf("neighbour_exchange: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
     }
 
     void increase_base() {
@@ -231,6 +242,22 @@ struct Permutation {
                 recursive();
             }
             r[i] = 0;
+            cnt--;
+        }
+    }
+
+    void new_recursive() {
+        if (lb == 0) {
+            #ifdef SHOW
+            puts(s+1);
+            #endif
+            return;
+        }
+        for (int i = 0; i < lb; i++) {
+            s[cnt++] = s1[i];
+            std::swap(s1[i], s1[--lb]);
+            new_recursive();
+            std::swap(s1[i], s1[lb++]);
             cnt--;
         }
     }
