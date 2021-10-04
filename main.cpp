@@ -35,20 +35,25 @@ struct Permutation {
         // recursive();
         // printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        next_permutation();
-        printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // next_permutation();
+        // printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        // init();
+        // start = clock();
+        // increase_base();
+        // printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
-        increase_base();
-        printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
-
-        init();
-        start = clock();
-        decrease_base();
+        decrease();
         printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
+        neighbour_exchange();
+        printf("neighbour_exchange: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
     }
 
     // a2,a3,....,a9
@@ -149,6 +154,42 @@ struct Permutation {
         }while(decrease_base_add_one());
     }
 
+    void decrease() {
+        auto st = s+1;
+        int idx_N = N-1;
+        while (true) {
+            #ifdef SHOW
+            puts(st);
+            #endif
+
+            int i = N;
+            r[i] += 1;
+            if (r[i] < N) {
+                char c = st[idx_N];
+                idx_N -= 1;
+                st[idx_N+1] = st[idx_N];
+                st[idx_N] = c;
+                continue;
+            }
+            while (r[i] == i) {
+                r[i] = 0;
+                r[--i] += 1;
+            }
+            if (i == 0) break;
+            int j = 0;
+            char c = 'a'+i-1;
+            while (st[j] != c) j++;
+            c = st[j], st[j] = st[j-1], st[j-1] = c;
+            int t = N-i;
+            for (j = 0; j < t; j++) {
+                st[N+j] = st[t-1-j];
+            }
+            memmove(st, st+t, N*sizeof(char));
+            st[N] = 0;
+            idx_N = N-1;
+        }
+    }
+
     void neighbour_exchange() {
         int idx_N = N, t_N = -1;
         while (true) {
@@ -187,7 +228,6 @@ struct Permutation {
     //         #ifdef SHOW
     //         puts(s+1);
     //         #endif
-
     //         int i = N;
     //         r[i] += 1;
     //         while (r[i] == i) {
