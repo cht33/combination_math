@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ctime>
 
-// #define SHOW
+//#define SHOW
 
 struct Permutation {
     const static int MAXN = 20;
@@ -12,6 +12,7 @@ struct Permutation {
     char s[2*MAXN]; // output string
     int r[MAXN]; // radix number
     int cnt;
+    int next[MAXN];
 
     void init() {
         memset(s, 0, 2*MAXN*sizeof(char));
@@ -30,10 +31,10 @@ struct Permutation {
         dictionary();
         printf("dictionary: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        // init();
-        // start = clock();
-        // recursive();
-        // printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        init();
+        start = clock();
+        recursive();
+        printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         // init();
         // start = clock();
@@ -48,6 +49,11 @@ struct Permutation {
         init();
         start = clock();
         decrease();
+        printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
+        decrease_base();
         printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
@@ -75,33 +81,24 @@ struct Permutation {
     }
 
     void increase_base() {
-        memset(s, 0, 2*MAXN*sizeof(char));
         do{
+            for(int i = 0;i <= N;i ++)next[i] = i - 1;
             for(int i = N - 2;i >= 0;i --){
                 int itemcnt = r[i];
-                int index = N - 1;
-                while(itemcnt || s[index] != 0){
-                    if(itemcnt && s[index] == 0){
-                        itemcnt --;
-                        index --;
-                    }
-                    else index --;
+                int preindex = N;
+                int index = next[N];
+                while(itemcnt){
+                    preindex = index;
+                    index = next[index];
+                    itemcnt --;
                 }
                 s[index] = 'a' + i + 1;
+                next[preindex] = next[index];
             }
-            for(int i = 0;i < N;i ++){
-                if(s[i] == 0){
-                    s[i] = 'a';
-                    break;
-                }
-            }
-
+            s[next[N]] = 'a';
             #ifdef SHOW
             puts(s);
             #endif
-
-            memset(s, 0, 2*MAXN*sizeof(char));
-
         }while(increase_base_add_one());
     }
 
@@ -124,33 +121,24 @@ struct Permutation {
     }
 
     void decrease_base() {
-        memset(s, 0, 2*MAXN*sizeof(char));
         do{
+            for(int i = 0;i <= N;i ++)next[i] = i - 1;
             for(int i = 0;i <= N - 2;i ++){
                 int itemcnt = r[i];
-                int index = N - 1;
-                while(itemcnt || s[index] != 0){
-                    if(itemcnt && s[index] == 0){
-                        itemcnt --;
-                        index --;
-                    }
-                    else index --;
+                int preindex = N;
+                int index = next[N];
+                while(itemcnt){
+                    preindex = index;
+                    index = next[index];
+                    itemcnt --;
                 }
                 s[index] = 'a' + i + 1;
+                next[preindex] = next[index];
             }
-            for(int i = 0;i < N;i ++){
-                if(s[i] == 0){
-                    s[i] = 'a';
-                    break;
-                }
-            }
-
+            s[next[N]] = 'a';
             #ifdef SHOW
             puts(s);
             #endif
-
-            memset(s, 0, 2*MAXN*sizeof(char));
-
         }while(decrease_base_add_one());
     }
 
