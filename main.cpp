@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ctime>
 
-#define SHOW
+//#define SHOW
 
 struct Permutation {
     const static int MAXN = 20;
@@ -48,6 +48,11 @@ struct Permutation {
 
         init();
         start = clock();
+        new_increase_base();
+        printf("new_increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
         decrease_base();
         printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
@@ -85,6 +90,41 @@ struct Permutation {
                 r[++i] ++;
             }
             if(r[N - 1])break;
+        }
+    }
+
+    void new_increase_base() {
+        int pointer[MAXN];
+        for(int i = 1;i <= N;i ++){
+            pointer[i] = i;
+        }
+        while(true) {
+            #ifdef SHOW
+            puts(s+1);
+            #endif
+
+            int i = 2;
+            r[i] ++;
+            while(r[i] >= i){
+                r[i] -= i;
+                r[++i] ++;
+            }
+
+            if(i == N + 1)break;
+            char c; int p;
+            for(int j = 1;j < i; j ++) {
+                if(pointer[j] < pointer[i]){
+                    c = s[pointer[i]], s[pointer[i]] = s[pointer[j]], s[pointer[j]] = c;
+                    p = pointer[i], pointer[i] = pointer[j], pointer[j] = p;
+                    break;
+                }
+            }
+            int l = 1, r = i - 1;
+            while(l < r){
+                c = s[pointer[l]], s[pointer[l]] = s[pointer[r]], s[pointer[r]] = c;
+                p = pointer[l], pointer[l] = pointer[r], pointer[r] = p;
+                l ++; r --;
+            }
         }
     }
 
