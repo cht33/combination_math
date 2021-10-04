@@ -1,9 +1,10 @@
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
+#include <iostream>
 #include <ctime>
 
-#define SHOW
+// #define SHOW
 
 struct Permutation {
     const static int MAXN = 20;
@@ -38,6 +39,114 @@ struct Permutation {
         start = clock();
         next_permutation();
         printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
+        increase_base();
+        printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
+        decrease_base();
+        printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+    }
+
+    // a2,a3,....,a9
+    // 2 ,3 ,....,9
+    bool increase_base_add_one() {
+        int i = 0;
+        r[i] ++;
+        while(r[i] >= i + 2){
+            r[i] -= i + 2;
+            r[i + 1] ++;
+            i ++;
+        }
+        if(r[N - 1]){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    void increase_base() {
+        memset(s, 0, 2*MAXN*sizeof(char));
+        do{
+            for(int i = N - 2;i >= 0;i --){
+                int itemcnt = r[i];
+                int index = N - 1;
+                while(itemcnt || s[index] != 0){
+                    if(itemcnt && s[index] == 0){
+                        itemcnt --;
+                        index --;
+                    }
+                    else index --;
+                }
+                s[index] = 'a' + i + 1;
+            }
+            for(int i = 0;i < N;i ++){
+                if(s[i] == 0){
+                    s[i] = 'a';
+                    break;
+                }
+            }
+
+            #ifdef SHOW
+            puts(s);
+            #endif
+
+            memset(s, 0, 2*MAXN*sizeof(char));
+
+        }while(increase_base_add_one());
+    }
+
+    // a9,a8,....,a2
+    // 9 ,8 ,....,2
+    bool decrease_base_add_one() {
+        int i = 0;
+        r[i] ++;
+        while(r[i] >= N - i && N - i != 1){
+            r[i] -= N - i;
+            r[i + 1] ++;
+            i ++;
+        }
+        if(r[N - 1]){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    void decrease_base() {
+        memset(s, 0, 2*MAXN*sizeof(char));
+        do{
+            for(int i = 0;i <= N - 2;i ++){
+                int itemcnt = r[i];
+                int index = N - 1;
+                while(itemcnt || s[index] != 0){
+                    if(itemcnt && s[index] == 0){
+                        itemcnt --;
+                        index --;
+                    }
+                    else index --;
+                }
+                s[index] = 'a' + i + 1;
+            }
+            for(int i = 0;i < N;i ++){
+                if(s[i] == 0){
+                    s[i] = 'a';
+                    break;
+                }
+            }
+
+            #ifdef SHOW
+            puts(s);
+            #endif
+
+            memset(s, 0, 2*MAXN*sizeof(char));
+
+        }while(decrease_base_add_one());
     }
 
     void neighbour_exchange() {
@@ -99,6 +208,10 @@ struct Permutation {
 } perm;
 
 int main() {
-    perm.generate(3);
+
+    int n;
+    std::cin >> n;
+
+    perm.generate(n);
     return 0;
 }
