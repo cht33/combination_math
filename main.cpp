@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ctime>
 
-//#define SHOW
+#define SHOW
 
 struct Permutation {
     const static int MAXN = 20;
@@ -36,20 +36,15 @@ struct Permutation {
         recursive();
         printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        // init();
-        // start = clock();
-        // next_permutation();
-        // printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
-
-        // init();
-        // start = clock();
-        // increase_base();
-        // printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        init();
+        start = clock();
+        next_permutation();
+        printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
-        decrease();
-        printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        increase_base();
+        printf("increase_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
@@ -62,26 +57,8 @@ struct Permutation {
         printf("neighbour_exchange: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
     }
 
-    // a2,a3,....,a9
-    // 2 ,3 ,....,9
-    bool increase_base_add_one() {
-        int i = 0;
-        r[i] ++;
-        while(r[i] >= i + 2){
-            r[i] -= i + 2;
-            r[i + 1] ++;
-            i ++;
-        }
-        if(r[N - 1]){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-
     void increase_base() {
-        do{
+        while(true){
             for(int i = 0;i <= N;i ++)next[i] = i - 1;
             for(int i = N - 2;i >= 0;i --){
                 int itemcnt = r[i];
@@ -92,57 +69,26 @@ struct Permutation {
                     index = next[index];
                     itemcnt --;
                 }
-                s[index] = 'a' + i + 1;
+                s[index + 1] = 'a' + i + 1;
                 next[preindex] = next[index];
             }
-            s[next[N]] = 'a';
+            s[next[N] + 1] = 'a';
+            
             #ifdef SHOW
-            puts(s);
+            puts(s+1);
             #endif
-        }while(increase_base_add_one());
-    }
 
-    // a9,a8,....,a2
-    // 9 ,8 ,....,2
-    bool decrease_base_add_one() {
-        int i = 0;
-        r[i] ++;
-        while(r[i] >= N - i && N - i != 1){
-            r[i] -= N - i;
-            r[i + 1] ++;
-            i ++;
-        }
-        if(r[N - 1]){
-            return false;
-        }
-        else{
-            return true;
+            int i = 0;
+            r[i] ++;
+            while(r[i] >= i + 2){
+                r[i] -= i + 2;
+                r[++i] ++;
+            }
+            if(r[N - 1])break;
         }
     }
 
     void decrease_base() {
-        do{
-            for(int i = 0;i <= N;i ++)next[i] = i - 1;
-            for(int i = 0;i <= N - 2;i ++){
-                int itemcnt = r[i];
-                int preindex = N;
-                int index = next[N];
-                while(itemcnt){
-                    preindex = index;
-                    index = next[index];
-                    itemcnt --;
-                }
-                s[index] = 'a' + i + 1;
-                next[preindex] = next[index];
-            }
-            s[next[N]] = 'a';
-            #ifdef SHOW
-            puts(s);
-            #endif
-        }while(decrease_base_add_one());
-    }
-
-    void decrease() {
         auto st = s+1;
         int idx_N = N-1;
         while (true) {
@@ -210,28 +156,6 @@ struct Permutation {
             t_N = (t_N << 1) - 1;
         }
     }
-
-    // void neighbour_exchange() {
-    //     while (true) {
-    //         #ifdef SHOW
-    //         puts(s+1);
-    //         #endif
-    //         int i = N;
-    //         r[i] += 1;
-    //         while (r[i] == i) {
-    //             r[i] = 0;
-    //             r[--i] += 1;
-    //         }
-    //         if (i == 0) break;
-    //         int j = 1;
-    //         char c = 'a'+i-1;
-    //         while (s[j] != c) j++;
-    //         // 只需考虑最后一位的运算结果，1为奇，0为偶
-    //         int t = (r[i-1] ^ (~i & r[i-2])) & 1;
-    //         t = (t << 1) - 1;
-    //         c = s[j+t], s[j+t] = s[j], s[j] = c;
-    //     }
-    // }
 
     void next_permutation() {
         auto st = s+1;
