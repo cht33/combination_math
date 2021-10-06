@@ -27,6 +27,7 @@ struct Permutation {
         s[0] = 0;
         cnt = 1;
         lb = N;
+        st = s+1;
     }
 
     void generate(int n) {
@@ -39,18 +40,18 @@ struct Permutation {
 
         init();
         start = clock();
-        recursive();
-        printf("recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        heap();
+        printf("heap: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        new_recursive();
-        printf("new_recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // new_recursive();
+        // printf("new_recursive: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        init();
-        start = clock();
-        next_permutation();
-        printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        // init();
+        // start = clock();
+        // next_permutation();
+        // printf("next_permutation: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         // init();
         // start = clock();
@@ -67,10 +68,29 @@ struct Permutation {
         // decrease_base();
         // printf("decrease_base: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        // init();
-        // start = clock();
-        // neighbour_exchange();
-        // printf("neighbour_exchange: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        init();
+        start = clock();
+        neighbour_exchange();
+        printf("neighbour_exchange: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+    }
+
+    void heap() {
+        #ifdef SHOW
+        puts(st);
+        #endif
+        int i = 1;
+        while (i < N) {
+            if (r[i] < i) {
+                int t = (i & 1) ? r[i] : 0;
+                char c = st[t]; st[t] = st[i], st[i] = c;
+                #ifdef SHOW
+                puts(st);
+                #endif
+                r[i]++, i = 1;
+            } else {
+                r[i++] = 0;
+            }
+        }
     }
 
     void increase_base() {
