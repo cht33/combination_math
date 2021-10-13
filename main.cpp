@@ -469,10 +469,12 @@ struct Permutation {
     // }
 } perm;
 
-int main() {
-    int n;
-    std::cin >> n;
-
+int main(int argc, char** argv) {
+    if(argc != 2){
+        std::cout << "Usage:" << std::endl;
+        std::cout << "./main lengh(int)" << std::endl;
+    }
+    int n = atoi(argv[1]);
     perm.generate(n);
     return 0;
 }
