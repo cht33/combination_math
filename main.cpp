@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ctime>
 
-#define SHOW
+// #define SHOW
 
 struct Permutation {
     const static int MAXN = 1000;
@@ -12,15 +12,17 @@ struct Permutation {
     int mediation[MAXN]; // 中介数
     char s[2*MAXN]; // 构造的排列
     char* st;
-    int cnt;
     int next[MAXN]; // 递增和递减中，按定义用中介数生成排列用的数组
+    int cnt; // 递归算法和新递归算法中用来标记递归层数
     int mark[MAXN]; // 递归算法中，标记特定位已经被使用过
-    int boundary;
-    char useable_chars[2*MAXN];
+    int stack_arr[MAXN]; // 基于堆的算法中，迭代模拟递归用的数组
+    int boundary; // 新递归算法中，用来维护可用集的边界
+    char useable_chars[2*MAXN]; // 新递归算法中，可用集数组
 
     void init() {
         memset(s, 0, 2*MAXN*sizeof(char));
         memset(mediation, 0, MAXN*sizeof(int));
+        memset(stack_arr, 0, MAXN*sizeof(int));
         for (int i = 1; i <= N; i++) {
             s[i] = 'a' + i - 1;
             useable_chars[i] = 'a' + i - 1;
@@ -65,20 +67,25 @@ struct Permutation {
         optimized_decrease_base();
         printf("optimized_decrease_base: %.2lfms\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        // init();
-        // start = clock();
-        // neighbour_exchange();
-        // printf("neighbour_exchange: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        init();
+        start = clock();
+        neighbour_exchange();
+        printf("neighbour_exchange: %.2lfms\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+
+        init();
+        start = clock();
+        optimized_neighbour_exchange();
+        printf("optimized_neighbour_exchange: %.2lfms\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
         dictionary();
         printf("dictionary: %.2lfms\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
-        // init();
-        // start = clock();
-        // heap();
-        // printf("heap: %lf\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
+        init();
+        start = clock();
+        heap();
+        printf("Heap's algorithm: %.2lfms\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
 
         init();
         start = clock();
@@ -86,22 +93,30 @@ struct Permutation {
         printf("new_recursive: %.2lfms\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC);
     }
 
-    void heap() {
-        #ifdef SHOW
-        puts(st);
-        #endif
-        int i = 1;
-        while (i < N) {
-            if (mediation[i] < i) {
-                int t = (i & 1) ? mediation[i] : 0;
-                char c = st[t]; st[t] = st[i], st[i] = c;
+    void next_permutation() {
+        auto st = s+1;
+        do {
+            #ifdef SHOW
+            puts(st);
+            #endif
+        } while (std::next_permutation(st, st+N));
+    }
+
+    void recursive() {
+        for (int i = 1; i <= N; i++) {
+            if (mark[i] != 0) continue;
+            mark[i] = 1;
+            s[cnt++] = 'a' + i - 1;
+
+            if (cnt == N+1) {
                 #ifdef SHOW
-                puts(st);
+                puts(s+1);
                 #endif
-                mediation[i]++, i = 1;
             } else {
-                mediation[i++] = 0;
+                recursive();
             }
+            mark[i] = 0;
+            cnt--;
         }
     }
 
@@ -269,6 +284,64 @@ struct Permutation {
     }
 
     void neighbour_exchange() {
+        while (true) {
+            
+            #ifdef SHOW
+            puts(s+1);
+            #endif
+
+            // 递减进制数加一
+            int i = N;
+            mediation[i] += 1;
+            while (mediation[i] == i) {
+                mediation[i] = 0;
+                mediation[--i] += 1;
+            }
+            if (i == 0) break;
+
+            memset(s, 0, 2*MAXN*sizeof(char));
+            
+            // 按照定义处理大于2的位
+            for(int i = N;i >= 3;i --){
+                // 判断当前位的方向
+                int is_right = (i & 1) ? (mediation[i - 1] & 1) : ((mediation[i - 1] + mediation[i - 2]) & 1);
+                // 在方向的指导下，数空位插入
+                int emptycnt = mediation[i];
+                int index = is_right ? 1 : N;
+                int delta = is_right ? 1 : -1;
+                while(emptycnt || s[index] != 0){
+                    if(s[index] == 0){
+                        emptycnt --;
+                    }
+                    index += delta;
+                }
+                s[index] = 'a' + i - 1;
+            }
+
+            // 单独处理2的情况，2的方向一定向左
+            int emptycnt = mediation[2];
+            int index = N;
+            while(emptycnt || s[index] != 0){
+                if(s[index] == 0){
+                    emptycnt --;
+                }
+                index --;
+            }
+            s[index] = 'b';
+
+            // 将1填在最后一个空位
+            index = N;
+            while(true){
+                if(s[index] == 0){
+                    s[index] = 'a';
+                    break;
+                }
+                index --;
+            }
+        }
+    }
+
+    void optimized_neighbour_exchange() {
         int idx_N = N, t_N = -1;
         while (true) {
             #ifdef SHOW
@@ -301,30 +374,54 @@ struct Permutation {
         }
     }
 
-    void next_permutation() {
-        auto st = s+1;
-        do {
+    void dictionary() {
+        while (true) {
+            
             #ifdef SHOW
-            puts(st);
+            puts(s+1);
             #endif
-        } while (std::next_permutation(st, st+N));
+
+            // 首先找到第一个高位数值小于低位数值的点
+            int i = N-1;
+            while (s[i+1] < s[i]) i--;
+            if (i == 0) break;
+            
+            // 再找到尾部序列中，大于这个高位数值的最小值
+            int j = N;
+            while (s[j] < s[i]) j--;
+            
+            // 交换二者
+            char c = s[j];
+            s[j] = s[i], s[i] = c;
+            
+            // 将剩余的序列翻转
+            // std::reverse(s+i+1, s+N+1);
+            auto l = s+i+1, r = s+N;
+            while (l < r)
+                c = *l, *l = *r, *r = c, l++, r--;
+        }
     }
 
-    void recursive() {
-        for (int i = 1; i <= N; i++) {
-            if (mark[i] != 0) continue;
-            mark[i] = 1;
-            s[cnt++] = 'a' + i - 1;
-
-            if (cnt == N+1) {
+    void heap() {
+        
+        #ifdef SHOW
+        puts(st);
+        #endif
+        
+        int i = 1;
+        while (i < N) {
+            if (stack_arr[i] < i) {
+                int t = (i & 1) ? stack_arr[i] : 0;
+                char c = st[t]; st[t] = st[i], st[i] = c;
+                
                 #ifdef SHOW
-                puts(s+1);
+                puts(st);
                 #endif
+                
+                stack_arr[i]++, i = 1;
             } else {
-                recursive();
+                stack_arr[i++] = 0;
             }
-            mark[i] = 0;
-            cnt--;
         }
     }
 
@@ -370,34 +467,6 @@ struct Permutation {
     //         cnt--;
     //     }
     // }
-
-    void dictionary() {
-        while (true) {
-            
-            #ifdef SHOW
-            puts(s+1);
-            #endif
-
-            // 首先找到第一个高位数值小于低位数值的点
-            int i = N-1;
-            while (s[i+1] < s[i]) i--;
-            if (i == 0) break;
-            
-            // 再找到尾部序列中，大于这个高位数值的最小值
-            int j = N;
-            while (s[j] < s[i]) j--;
-            
-            // 交换二者
-            char c = s[j];
-            s[j] = s[i], s[i] = c;
-            
-            // 将剩余的序列翻转
-            // std::reverse(s+i+1, s+N+1);
-            auto l = s+i+1, r = s+N;
-            while (l < r)
-                c = *l, *l = *r, *r = c, l++, r--;
-        }
-    }
 } perm;
 
 int main() {
