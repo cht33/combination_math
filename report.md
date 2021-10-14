@@ -73,7 +73,7 @@
 
 ### 效果对比
 
-![result_fig1](fig/result1.png)
+<img src="fig/result1.png" alt="result_fig1" style="zoom:67%;" />
 
 ![result_fig2](fig/result2.jpg)
 
@@ -98,11 +98,12 @@
 ### 仓库说明
 
 ```
-fig/		// 报告内用到的图片
-report.md	// 报告markdown源码
-report.pdf	// 生成的PDF报告
-main.cpp	// 代码
-run.sh		// 运行编译脚本
+fig/				// 报告内用到的图片
+report.md			// 报告markdown源码
+report.pdf			// 生成的PDF报告
+main.cpp			// 代码
+run.sh				// 运行编译脚本
+performance_test.py // 性能测试脚本
 ```
 
 - main.cpp
