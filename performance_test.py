@@ -5,7 +5,7 @@ from matplotlib.ticker import MaxNLocator
 
 plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
 
-target_length = range(8,16)
+target_length = range(7,13)
 test_times = 10
 
 result_maps = {}
