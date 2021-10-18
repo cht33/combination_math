@@ -1,7 +1,32 @@
 # 组合数学全排列项目报告
-##### 2021 陈海天 2021310754 潘俊臣
+
+> 2021 陈海天 2021310754 潘俊臣
+
 ## 四种全排列算法及其改进
+
+### 复杂度分析
+
+1. 如果所有算法不进行优化，严格按照中介数的生成规则来进行转换，每次递归的复杂度都是 $O(n)$的，那么易知总体复杂度为 $O(n \times n!)$。
+
+2. 递增进制数法和字典序使用的中介数都是递增进制，复杂度十分类似。设每次递归进了 $k$ 位，在优化之后我们可以做到每次递归的复杂度为 $O(k)$，所以总体复杂度为：
+$$
+\sum\limits_{k=1}^{n} \frac{n!}{k!}(k-1)O(k) = O(n!) \sum\limits_{k=1}^{n} \frac{k(k-1)}{k!} = O(n!)
+$$
+
+3. 递减进制数法和邻位交换法使用的中介数都是递减进制，复杂度十分类似。设每次递归进了 $k$ 位，在优化之后我们可以做到每次递归的均摊复杂度为 $O(n-k)$，所以总体复杂度为：
+$$
+\sum\limits_{k=1}^{n-1} k!O(n-k) = O(n!)\sum\limits_{k=1}^{n-1} \frac{k!(n-k)}{n!} = O(n!)
+$$
+
+4. 额外实现的 `Heap`算法每次递归中的操作都是 $O(1)$的，所以其复杂度为 $O(n!)$。
+
+以下是渐进的时间复杂度对比分析图，横坐标为 $n$ ，纵坐标为所用时间除以 $n!$ 
+
+TODO
+
+
 ### 递增进制数法
+
 - 原算法流程：
   
   维护递增进制中介数，每迭代一次，按照递增进制原则给中介数加一。
@@ -42,7 +67,9 @@
 
 - 优化后算法：
   
-  TODO
+  维护递减进制中介数，每迭代一次，按照递减进制原则给中介数加一。
+  
+  缓存最大元素当前的位置和移动方向，当中介数未进位时，直接沿用当前的位置和方向。当中介数进位时，找到最大的未进位的元素，根据中介数计算出其方向并移动(具体实现使用位运算快速计算)。同时更新最大元素的位置和方向。
 
 ### 字典序法
 
@@ -108,7 +135,18 @@ performance_test.py // 性能测试脚本
 
 - main.cpp
 
-  内有报告中描述的所有算法的源码，按照报告所述的顺序排列(STL和基础递归作为对比排在开头)。依次为：STL`next_permutation()`，递归法`recursive()`，递增进制数法`increase_base()`， 优化递增进制数法`optimized_increase_base()`，递减进制数法`decrease_base()`，优化递减进制数法`optimized_decrease_base()`，邻位对换法`neighbor_exchange()`，优化邻位对换法`optimized_neighbor_exchange()`，字典序法`dictionary()`，Heap's algorithm`heap()`，新式递归法`new_recursive()`。
+  内有报告中描述的所有算法的源码，按照报告所述的顺序排列(STL和基础递归作为对比排在开头)。依次为：
+  - STL`next_permutation()`
+  - 递归法`recursive()`
+  - 递增进制数法`increase_base()`，
+  - 优化递增进制数法`optimized_increase_base()`
+  - 递减进制数法`decrease_base()`
+  - 优化递减进制数法`optimized_decrease_base()`
+  - 邻位对换法`neighbor_exchange()`
+  - 优化邻位对换法`optimized_neighbor_exchange()`
+  - 字典序法`dictionary()`
+  - Heap's algorithm`heap()`
+  - 新式递归法`new_recursive()`
 
   所有算法的输出可以通过取消`//# define SHOW`的注释打开，重新编译运行即可查看对应结果。（默认关闭）
 

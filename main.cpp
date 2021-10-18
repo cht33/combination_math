@@ -43,16 +43,16 @@ struct Permutation {
     void generate(int n) {
         N = n;
         auto start = clock();
-        TEST(next_permutation);
+        // TEST(next_permutation);
         // TEST(recursive);
         // TEST(increase_base);
-        TEST(optimized_increase_base);
+        // TEST(optimized_increase_base);
         // TEST(decrease_base);
         TEST(optimized_decrease_base);
         // TEST(neighbour_exchange);
-        TEST(optimized_neighbour_exchange);
-        TEST(dictionary);
-        TEST(heap);
+        // TEST(optimized_neighbour_exchange);
+        // TEST(dictionary);
+        // TEST(heap);
         // TEST(new_recursive);
     }
 
@@ -226,9 +226,9 @@ struct Permutation {
             if (i == 0) break;
 
             // 将最小的k在1-k的子排列中前移一位
-            int j = 0;
+            int j = N-1;
             char c = 'a'+i-1;
-            while (st[j] != c) j++;
+            while (st[j] != c) j--;
             c = st[j], st[j] = st[j-1], st[j-1] = c;
 
             // 将位于高位的逆序n,n-1,..,n-k+1移动到低位并翻转
