@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 #include <ctime>
+#include <string>
+#include <map>
 
 // #define SHOW
 
@@ -12,6 +14,33 @@
     fn_name(); \
     printf(#fn_name ": %.2lfms\n", (double)(clock() - start)*1000/CLOCKS_PER_SEC); \
 } while(0)
+
+enum algorithm_name {
+    next_permutation,
+    recursive,
+    increase_base,
+    optimized_increase_base,
+    decrease_base,
+    optimized_decrease_base,
+    neighbour_exchange,
+    optimized_neighbour_exchange,
+    dictionary,
+    heap,
+    new_recursive};
+
+std::map<std::string,algorithm_name> str_to_enum = {
+    {"next_permutation",algorithm_name::next_permutation},
+    {"recursive",algorithm_name::recursive},
+    {"increase_base",algorithm_name::increase_base},
+    {"optimized_increase_base",algorithm_name::optimized_increase_base},
+    {"decrease_base",algorithm_name::decrease_base},
+    {"optimized_decrease_base",algorithm_name::optimized_decrease_base},
+    {"neighbour_exchange",algorithm_name::neighbour_exchange},
+    {"optimized_neighbour_exchange",algorithm_name::optimized_neighbour_exchange},
+    {"dictionary",algorithm_name::dictionary},
+    {"heap",algorithm_name::heap},
+    {"new_recursive",algorithm_name::new_recursive}
+};
 
 struct Permutation {
     const static int MAXN = 1000;
@@ -40,20 +69,45 @@ struct Permutation {
         st = s+1;
     }
 
-    void generate(int n) {
+    void generate(int n, algorithm_name name) {
         N = n;
         auto start = clock();
-        // TEST(next_permutation);
-        // TEST(recursive);
-        // TEST(increase_base);
-        // TEST(optimized_increase_base);
-        // TEST(decrease_base);
-        TEST(optimized_decrease_base);
-        // TEST(neighbour_exchange);
-        // TEST(optimized_neighbour_exchange);
-        // TEST(dictionary);
-        // TEST(heap);
-        // TEST(new_recursive);
+        switch (name)
+        {
+        case algorithm_name::next_permutation:
+            TEST(next_permutation);
+            break;
+        case algorithm_name::recursive:
+            TEST(recursive);
+            break;
+        case algorithm_name::increase_base:
+            TEST(increase_base);
+            break;
+        case algorithm_name::optimized_increase_base:
+            TEST(optimized_increase_base);
+            break;
+        case algorithm_name::decrease_base:
+            TEST(decrease_base);
+            break;
+        case algorithm_name::optimized_decrease_base:
+            TEST(optimized_decrease_base);
+            break;
+        case algorithm_name::neighbour_exchange:
+            TEST(neighbour_exchange);
+            break;
+        case algorithm_name::optimized_neighbour_exchange:
+            TEST(optimized_neighbour_exchange);
+            break;
+        case algorithm_name::dictionary:
+            TEST(dictionary);
+            break;
+        case algorithm_name::heap:
+            TEST(heap);
+            break;
+        case algorithm_name::new_recursive:
+            TEST(new_recursive);
+            break;
+        }
     }
 
     void next_permutation() {
@@ -407,37 +461,20 @@ struct Permutation {
             cnt--;
         }
     }
-
-    // void increase_base_recursive() {
-    //     for (int i = N; i > 0; i--) {
-    //         if (mediation[i] != 0) continue;
-    //         mediation[i] = 1;
-
-    //         #ifdef SHOW
-    //         s[i] = 'a' + N - cnt++;
-    //         #else
-    //         s[cnt++] = i;
-    //         #endif
-
-    //         if (cnt == N+1) {
-    //             #ifdef SHOW
-    //             puts(s+1);
-    //             #endif
-    //         } else {
-    //             increase_base_recursive();
-    //         }
-    //         mediation[i] = 0;
-    //         cnt--;
-    //     }
-    // }
 } perm;
 
 int main(int argc, char** argv) {
-    if(argc != 2){
+    if(argc != 3){
         std::cout << "Usage:" << std::endl;
-        std::cout << "./main lengh(int)" << std::endl;
+        std::cout << "./main lengh(int) algorithm_name(str)" << std::endl;
+        return 0;
     }
     int n = atoi(argv[1]);
-    perm.generate(n);
+    std::string name = std::string(argv[2]);
+    if(str_to_enum.find(name) == str_to_enum.end()){
+        std::cout << "Wrong algorithm name" << std::endl;
+        return 0;
+    }
+    perm.generate(n, str_to_enum[name]);
     return 0;
 }

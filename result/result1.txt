@@ -1,0 +1,44 @@
+{
+    "8": {
+        "recursive": 1.026,
+        "increase_base": 2.3089999999999997,
+        "decrease_base": 2.1870000000000003,
+        "neighbour_exchange": 6.109,
+        "new_recursive": 0.399
+    },
+    "9": {
+        "recursive": 9.554999999999998,
+        "increase_base": 24.29,
+        "decrease_base": 22.874,
+        "neighbour_exchange": 62.402,
+        "new_recursive": 3.593000000000001
+    },
+    "10": {
+        "recursive": 107.91299999999998,
+        "increase_base": 263.257,
+        "decrease_base": 236.52799999999996,
+        "neighbour_exchange": 656.734,
+        "new_recursive": 41.800000000000004
+    },
+    "11": {
+        "recursive": 1434.8500000000001,
+        "increase_base": 3237.156,
+        "decrease_base": 2984.3100000000004,
+        "neighbour_exchange": 7766.873999999999,
+        "new_recursive": 606.404
+    },
+    "12": {
+        "recursive": 18271.577,
+        "increase_base": 43499.447,
+        "decrease_base": 40690.407,
+        "neighbour_exchange": 101197.00700000001,
+        "new_recursive": 6597.648000000001
+    },
+    "13": {
+        "recursive": 242423.777,
+        "increase_base": 625910.338,
+        "decrease_base": 615060.584,
+        "neighbour_exchange": 1407284.8799999997,
+        "new_recursive": 76026.836
+    }
+}
