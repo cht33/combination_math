@@ -32,7 +32,7 @@ def test(test_name, target_length, target_algorithm, test_times):
         plt.plot(x, y, label = key)
 
     plt.xlabel("Permutaion Length")
-    plt.legend()
+    plt.legend(loc = "upper right")
     plt.savefig("fig/" + test_name + ".jpg")
     plt.close()
 
